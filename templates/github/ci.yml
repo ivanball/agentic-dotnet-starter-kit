@@ -1,0 +1,70 @@
+# TEMPLATE. Copy to .github/workflows/ in your repo. Change four things:
+#   1. the solution name (`Helpdesk.sln`) in the restore and build steps;
+#   2. the three test project paths, or collapse them into one `dotnet test <sln>`
+#      step if you do not want the failure to name which tier broke;
+#   3. the SQL password, in BOTH the service `env` block and the health command,
+#      and in the connection string your tests read. It is a throwaway for a
+#      container that lives for one job, but do not paste a real one here;
+#   4. the host port 14330 if your local compose file publishes a different one.
+#      Keep it identical to local so no test code changes between laptop and CI.
+# Required-check name to protect `main` with is the JOB name, `build-and-test`,
+# not the step names. The three test steps run inside that one job.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    # The API tests connect to localhost,14330 exactly as they do on a laptop,
+    # so the service container publishes 1433 on that host port and nothing
+    # in the test code changes between here and docker-compose.
+    services:
+      sql:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        env:
+          ACCEPT_EULA: "Y"
+          MSSQL_SA_PASSWORD: "Workshop!Passw0rd"
+        ports:
+          - 14330:1433
+        options: >-
+          --health-cmd "/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P Workshop!Passw0rd -Q 'SELECT 1'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 12
+          --health-start-period 20s
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore (locked mode)
+        run: dotnet restore Helpdesk.sln --locked-mode
+
+      - name: Build
+        run: dotnet build Helpdesk.sln -warnaserror --no-restore
+
+      - name: Unit tests
+        run: dotnet test tests/Helpdesk.Tickets.Domain.Tests --no-build
+
+      - name: Architecture (fitness) tests
+        run: dotnet test tests/Helpdesk.ArchitectureTests --no-build
+
+      - name: API integration tests
+        run: dotnet test tests/Helpdesk.ApiTests --no-build

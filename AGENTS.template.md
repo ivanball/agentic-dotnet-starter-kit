@@ -1,4 +1,8 @@
-# <Project name>
+# <Project name> (agent instructions)
+
+Kept identical to CLAUDE.md, rule for rule. Tools that read AGENTS.md onboard from this
+file; Claude Code reads CLAUDE.md. One set of rules, two file names, so every agent and
+every human starts from the same contract.
 
 <One paragraph: what this system is, its module/layer shape, where the composition root is.>
 
