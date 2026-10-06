@@ -7,6 +7,8 @@
 #      container that lives for one job, but do not paste a real one here;
 #   4. the host port 14330 if your local compose file publishes a different one.
 #      Keep it identical to local so no test code changes between laptop and CI.
+# Lock files and the package audit come from templates/Directory.Build.props, copied
+# to the repository root. Without it, locked mode has nothing to lock to.
 # Required-check name to protect `main` with is the JOB name, `build-and-test`,
 # not the step names. The three test steps run inside that one job.
 name: CI

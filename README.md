@@ -15,13 +15,16 @@ placeholders, delete the rest.
 ## What to copy, in adoption order
 
 1. **Context files.** `CLAUDE.template.md` and `AGENTS.template.md` become `CLAUDE.md`
-   and `AGENTS.md` at your repository root. Same rules, two file names, because different
-   tools read different names. Fill in the blanks: half an hour, and it is the single
+   and `AGENTS.md` at your repository root. Same rules, one file: fill in `AGENTS.md`,
+   and make `CLAUDE.md` the one line `@AGENTS.md`, because Claude Code skips `AGENTS.md`
+   whenever a `CLAUDE.md` exists. Fill in the blanks: half an hour, and it is the single
    highest-return file in the list.
 2. **Settings and hooks.** `.claude/settings.json` carries the allow list, the deny list,
    the permission mode and the sandbox block, and wires the two hooks in
    `.claude/hooks/`. Allow rules are for read-only and reversible work; deny rules and
-   hooks are for what must never happen regardless of who asks.
+   hooks are for what must never happen regardless of who asks. The sandbox applies on
+   macOS, Linux and WSL2; on native Windows commands run unsandboxed, so the deny rules
+   and hooks are the only layer there.
 3. **Skills.** `.claude/skills/` holds three: `slice` (add one use case end to end the
    way this codebase already does it), `spec-first-change` (spec, plan, approve,
    implement, verify), and `ci-diagnose` (find the first failed step, classify it, never
@@ -31,8 +34,10 @@ placeholders, delete the rest.
    xUnit tests. Substitute the placeholder names, add the project to your solution, and
    put it in the required check.
 5. **CI and release.** `templates/github/` has `ci.yml`, `release.yml` and
-   `agent-review.yml`, plus `templates/Dockerfile`. Each carries a header naming what to
-   change. The agent review workflow needs an API key secret; skip it without one.
+   `agent-review.yml`, plus `templates/Dockerfile` and `templates/Directory.Build.props`
+   (the lock files and audit that CI and the Dockerfile rely on). Each carries a header
+   naming what to change. The agent review workflow needs an API key secret; skip it
+   without one. It is advisory: never make it a required check.
 6. **Aspire seed.** `aspire/` is an app host and service defaults pair, with the
    liveness and readiness wiring, plus `aspire/README.md` for dropping it in and
    `aspire/MCP-SETUP.md` for pointing an agent at the running app over MCP.
@@ -57,9 +62,10 @@ guardrail nobody knows is wired.
   hook, with the hook's own message. If it is not, the hook path in `settings.json` is
   wrong or the script is not executable. A hook with a carriage return in its shebang
   fails silently on some shells, which is why `.gitattributes` pins `*.sh` to LF.
-- **Deny rules fire.** Ask for `rm -rf` on something harmless. Refused before the hook
-  runs. Keep both layers: the deny list catches the common spellings, the hook catches
-  the rewordings the pattern list misses.
+- **Deny rules fire.** Ask for `rm -rf` on a relative path. The hook lets it through
+  (its pattern only covers absolute paths), and the deny rule refuses it. That proves
+  the deny layer on its own. Keep both layers: the deny list catches the common
+  spellings, the hook catches the rewordings the pattern list misses.
 - **A skill fires.** Start a fresh session and describe the situation in your own words
   without naming the skill: "CI went red on my branch, what happened?" should reach
   `ci-diagnose`. If it does not, the description is wrong, not your phrasing.

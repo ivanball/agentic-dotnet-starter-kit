@@ -11,7 +11,9 @@
     "deny": [
       "Bash(dotnet ef database drop:*)",
       "Bash(git push --force:*)",
-      "Bash(rm -rf:*)"
+      "Bash(rm -rf:*)",
+      "Read(./.env)",
+      "Read(./**/*.pem)"
     ]
   },
   "sandbox": {
@@ -24,8 +26,8 @@
       {
         "matcher": "Bash",
         "hooks": [
-          { "type": "command", "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/block-dangerous.sh" },
-          { "type": "command", "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/confirm-merge.sh" }
+          { "type": "command", "command": "\"${CLAUDE_PROJECT_DIR}\"/.claude/hooks/block-dangerous.sh" },
+          { "type": "command", "command": "\"${CLAUDE_PROJECT_DIR}\"/.claude/hooks/confirm-merge.sh" }
         ]
       }
     ]

@@ -74,8 +74,10 @@ and keep read tools marked read-only.
 
 ## Connecting a client
 
-- **MCP Inspector**, fastest for seeing the tool list: `npx @modelcontextprotocol/inspector`,
-  transport Streamable HTTP, URL `http://localhost:<port>/mcp`.
+- **MCP Inspector**, fastest for seeing the tool list:
+  `npx @modelcontextprotocol/inspector@latest` (Node.js 22.19 or newer, 24 LTS
+  recommended), transport Streamable HTTP, URL `http://localhost:<port>/mcp`. Keep the
+  `@latest`: the bare name can reuse a cached old version.
 - **VS Code**: a `.vscode/mcp.json` entry with `"type": "http"` and the same URL.
 - **Claude Code**: `claude mcp add --transport http <name> http://localhost:<port>/mcp`,
   then `/mcp` to confirm it connected.
@@ -86,8 +88,10 @@ Nothing here is authenticated, which is fine for a workshop and not fine for any
 else. A production MCP server is an OAuth 2.1 resource server: it publishes protected
 resource metadata, refuses an unauthenticated call with a 401 naming its authorization
 server, and the client runs the authorization code flow with PKCE and retries with a
-bearer token. Scopes then carry per-tool permission, so a read-only agent gets a token
-that is refused at the token on a write tool. The SDK has the server side of that, and
+bearer token. Your server can map scopes to tools (the spec leaves that mapping to you),
+so a read-only agent's token is refused on a write tool, and since 2025-11-25 the server
+can ask for a wider scope on a later call through WWW-Authenticate. The SDK has the
+server side of that, and
 the endpoint `MapMcp` returns takes `RequireAuthorization()` like any other.
 
 That is the honest end of the sentence this starts with: MCP is one more adapter at the

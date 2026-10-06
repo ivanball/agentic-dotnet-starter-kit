@@ -21,7 +21,7 @@ checks before you know how you will satisfy them.
      obvious. It is the field that stops a small change from growing a refactor.
    - **Acceptance checks.** Numbered, each one a command, an assertion or an observation
      that can come back true or false. "Works correctly" is not a check. "`POST /tickets`
-     with an empty title returns 400 and error code `Tickets.TitleRequired`" is.
+     with an empty title returns 400 and error code `Tickets.Validation.EmptyTitle`" is.
 2. Ask the questions now. Anything ambiguous in the request goes back to the human before
    any code is written, not halfway through. This is the last point at which asking is cheap.
 3. Enter plan mode and produce the plan: the ordered edits, the test that proves each one,

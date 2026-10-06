@@ -2,6 +2,7 @@
 #   1. the project path in the restore and publish lines;
 #   2. the entry point assembly name on the last line;
 #   3. the COPY list, if your build needs more than Directory.Build.props and src/.
+#      Directory.Build.props is templates/Directory.Build.props, copied to the root.
 # Keep the two stages and keep USER $APP_UID: the runtime image ships that
 # non-root account, and running as root is the default nobody notices.
 # Build stage: the SDK image restores from the committed lock files and publishes the host.

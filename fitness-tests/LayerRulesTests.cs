@@ -5,8 +5,10 @@
 //   YourApp          -> your solution prefix
 //   SomeAggregate    -> any type that lives in your domain assembly
 //   SomeHandler      -> any type that lives in your application assembly
-//   Module           -> one module name, for the assembly strings in rules 3, 5 and 6
+//   Module           -> one module name (used in every rule)
 //   OtherModule      -> a second module, for rule 6
+//   OtherModuleRegistration -> any public type in the second module's infrastructure
+//                       assembly, for rule 6
 //
 // Then prove each test can fail by temporarily breaking the rule it guards and watching
 // the red run. A fitness test that has never failed is decoration, not a gate.

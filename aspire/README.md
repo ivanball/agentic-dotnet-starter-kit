@@ -51,14 +51,16 @@ their own database never migrate twice.
 
 ## What the dashboard is for
 
-Open **Traces** after one request. A create call is three levels: the HTTP span, the
-handler work under it, and a database span under that. The database span is why the
+Open **Traces** after one request. A create call is the HTTP span with the database span
+(the INSERT) directly under it. Add an ActivitySource to your handlers if you want a
+handler level in between. The database span is why the
 service defaults project turns on SQL client instrumentation; without it the database
 time is invisible and reads as an unexplained gap inside the HTTP span. **Structured
 logs** are joined to traces by trace id, so you can go from a slow request to the log
 lines written during it without searching for anything.
 
-The tell worth teaching: a log line with no trace around it ran after the request was
-answered. That is how work that escaped the request scope shows itself.
+The tell worth teaching: an error log for a request whose trace already ended green ran
+after the caller had its answer. That is how work that escaped the request scope shows
+itself.
 
 See `MCP-SETUP.md` for pointing a coding agent at this dashboard.

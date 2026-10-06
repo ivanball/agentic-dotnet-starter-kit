@@ -4,7 +4,9 @@ description: >
   Use to score a repository against the five-rule architecture mini rubric in
   evals/rubric.md, from evidence read in THIS run. Returns 0, 1 or 2 per rule with
   path:line evidence and a CONFIRMED or FLAG verdict. Does not total the score and
-  does not write anything. Pair with evidence-verifier for an adversarial second pass.
+  does not write anything: read-only by instruction, since Bash is granted for git and
+  gh reads, so the constraint lives in the prompt, not the tool list. Pair with
+  evidence-verifier for an adversarial second pass.
 tools: Read, Grep, Glob, Bash
 model: sonnet
 ---

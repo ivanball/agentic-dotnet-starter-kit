@@ -1,0 +1,21 @@
+<!-- TEMPLATE. Copy to your repository root, beside the solution file. ci.yml restores in
+     locked mode and the Dockerfile copies this file first: without it there are no lock
+     files to lock to, and no audit for the build to fail on. Merge these properties
+     into your existing Directory.Build.props if you already have one. -->
+<Project>
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <!-- Reproducible restore. Every project writes a packages.lock.json, and CI
+       restores in locked mode so a package cannot change under us between runs.
+       After changing a package version, re-run restore with the force-evaluate switch. -->
+  <PropertyGroup>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <NuGetAudit>true</NuGetAudit>
+    <NuGetAuditMode>all</NuGetAuditMode>
+    <NuGetAuditLevel>low</NuGetAuditLevel>
+  </PropertyGroup>
+</Project>

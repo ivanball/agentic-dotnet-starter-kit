@@ -1,5 +1,8 @@
 # <Project name>
 
+<If you also keep AGENTS.md, replace this whole file with the one line `@AGENTS.md`, so
+Claude Code loads the same rules as every other agent. Otherwise fill in the blanks below.>
+
 <One paragraph: what this system is, its module/layer shape, where the composition root is.>
 
 ## Commands

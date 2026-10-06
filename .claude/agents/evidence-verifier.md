@@ -4,7 +4,8 @@ description: >
   Use to confirm a claim, a score or a number against real code, config or CI read in
   THIS run. Delegate the adversarial second pass over a scorer's rule scores, and any
   claim that something is enforced. Returns compact verdicts with path:line citations,
-  never file dumps. Read-only: it never writes, commits or edits.
+  never file dumps. Read-only by instruction: Bash is granted for git and gh reads, so
+  the constraint lives in the prompt, not the tool list.
 tools: Read, Grep, Glob, Bash
 model: opus
 ---

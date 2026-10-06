@@ -11,7 +11,7 @@ aspire --version
 aspire agent --help
 ```
 
-The `agent` command arrived on the 13.1 line. A CLI that predates it answers
+The `agent` command arrived in 13.2 (renamed from `aspire mcp`). A CLI that predates it answers
 `Unrecognized command or argument 'agent'`. Update before going further: everything
 below depends on it, and the failure mode is a config file that looks right and a server
 that never starts.
@@ -53,9 +53,10 @@ resource's logs, and read traces. That is enough for the loop this exists for:
 > The close endpoint returns 204 but the record reads back unchanged. Use the aspire MCP
 > server to read the logs and traces from the running app, find the failure, and fix it.
 
-Work that failed after the response was sent has no trace around it, and that is exactly
-the class of bug a passing test suite does not see and a green trace does not show. The
-agent reads the orphaned error line, follows the exception to the handler and proposes
+Work that failed after the response was sent shows up as an error log for a request whose
+trace already ended green, and that is exactly the class of bug a passing test suite does
+not see and the trace alone does not show. The agent reads that error line, follows the
+exception to the handler and proposes
 the fix. Confirm the fix the way CI would, by running the test tier that covers it, not
 by re-reading the dashboard.
 

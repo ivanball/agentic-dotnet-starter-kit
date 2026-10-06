@@ -3,7 +3,7 @@
 # Change the layer rules quoted in the prompt to your own, and keep the second
 # instruction verbatim: the gate-weakening check is the half that catches the
 # failure mode agent-written pull requests actually have.
-# instructor demo; needs the ANTHROPIC_API_KEY secret; attendees without a key skip this file
+# Keep it advisory: never add this job to the branch-protection required checks.
 name: Agent review
 
 on:
@@ -46,4 +46,4 @@ jobs:
             Report only what you can point at. If the diff breaks neither, say so in
             one line and stop.
           claude_args: |
-            --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr diff:*),Bash(gh pr view:*)"
+            --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr comment:*)"

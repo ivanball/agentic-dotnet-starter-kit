@@ -1,6 +1,9 @@
 <!-- SEED FILE. Rename to <YourApp>.AppHost.csproj, change the UserSecretsId to a
-     fresh GUID, and repoint the ProjectReference at your own host project. -->
-<Project Sdk="Aspire.AppHost.Sdk/13.0.0">
+     fresh GUID, and repoint the ProjectReference at your own host project.
+     Keep the SDK and the hosting package on the same Aspire version as your Aspire CLI
+     (13.6.0 as of October 2026): with an older AppHost SDK the current CLI and its MCP
+     server (aspire agent mcp) cannot see the running AppHost at all. -->
+<Project Sdk="Aspire.AppHost.Sdk/13.6.0">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -8,12 +11,21 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <UserSecretsId>fa654e4e-cef4-41a0-9f4b-8a6f8f30bdbe</UserSecretsId>
+    <!-- The AppHost SDK adds a dashboard package for the restoring machine's own
+         platform (Aspire.Dashboard.Sdk.win-x64 on a Windows laptop), so its lock file
+         can never match the Linux CI runner and locked mode fails with NU1004.
+         The AppHost never ships (the image is published from your host project), so it
+         opts out of the lock files Directory.Build.props turns on everywhere else. -->
+    <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
+    <!-- Use the Aspire CLI bundle: without it the 13.6 SDK warns ASPIRE010 and the CLI
+         features the agent loop relies on are unavailable. -->
+    <AspireUseCliBundle>true</AspireUseCliBundle>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.Hosting.SqlServer" Version="13.0.0" />
-    <!-- The AppHost pulls MessagePack 2.5.192 transitively (Kubernetes client), and that
-         version carries published advisories. NuGetAudit is on, so the build refuses it.
+    <PackageReference Include="Aspire.Hosting.SqlServer" Version="13.6.0" />
+    <!-- The AppHost can pull an older MessagePack transitively (Kubernetes client) that
+         carries published advisories. NuGetAudit is on, so the build refuses it.
          Naming the package directly pins the fixed version. Bump, never suppress. -->
     <PackageReference Include="MessagePack" Version="2.5.303" />
   </ItemGroup>

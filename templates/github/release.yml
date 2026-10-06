@@ -3,7 +3,6 @@
 #   2. the Dockerfile `context` if your Dockerfile is not at the repository root;
 #   3. nothing else. GITHUB_TOKEN is provided by Actions; no secret to create.
 # Container registry names must be lower case, including the owner segment.
-# the agent wrote this from the prompt in the Lab 5 handout; edit as you like
 name: Release
 
 on:
