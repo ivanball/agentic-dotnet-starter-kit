@@ -24,7 +24,9 @@ placeholders, delete the rest.
    `.claude/hooks/`. Allow rules are for read-only and reversible work; deny rules and
    hooks are for what must never happen regardless of who asks. The sandbox applies on
    macOS, Linux and WSL2; on native Windows commands run unsandboxed, so the deny rules
-   and hooks are the only layer there.
+   and hooks are the only layer there. Every rule appears for both `Bash` and `PowerShell`,
+   and the hooks match `Bash|PowerShell`: on Windows the agent also has a native PowerShell
+   tool, and `Bash` rules and a `Bash`-only hook do not see what it runs there.
 3. **Skills.** `.claude/skills/` holds three: `slice` (add one use case end to end the
    way this codebase already does it), `spec-first-change` (spec, plan, approve,
    implement, verify), and `ci-diagnose` (find the first failed step, classify it, never
@@ -66,6 +68,9 @@ guardrail nobody knows is wired.
   (its pattern only covers absolute paths), and the deny rule refuses it. That proves
   the deny layer on its own. Keep both layers: the deny list catches the common
   spellings, the hook catches the rewordings the pattern list misses.
+- **Both shells are covered (Windows).** Repeat the two checks above, asking the agent to
+  use its PowerShell tool: `git push --force` should be refused by the hook, and
+  `Remove-Item -Recurse` on a relative path by the deny rule.
 - **A skill fires.** Start a fresh session and describe the situation in your own words
   without naming the skill: "CI went red on my branch, what happened?" should reach
   `ci-diagnose`. If it does not, the description is wrong, not your phrasing.
