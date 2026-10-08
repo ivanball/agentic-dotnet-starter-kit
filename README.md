@@ -52,8 +52,8 @@ placeholders, delete the rest.
 9. **MCP host.** `mcp-host/` is the tool class pattern and the registration for serving
    your own use cases to an agent over streamable HTTP from inside the app you have.
 
-Workshop solution, with a snapshot branch per lab: `<workshop repo link: TODO before the
-conference>`
+Workshop solution, with a snapshot branch per lab:
+<https://github.com/ivanball/adc2026-helpdesk>
 
 ## Verify
 
