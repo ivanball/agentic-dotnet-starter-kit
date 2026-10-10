@@ -12,6 +12,14 @@ true six months from now. Every file here came out of the workshop solution, so 
 and the solution cannot disagree with each other. Copy what you need, rename the
 placeholders, delete the rest.
 
+## Before the workshop: check your setup
+
+`setup/` holds the pre-workshop setup checker. Run it from the root of your clone and make
+sure every line says OK:
+
+- Windows: `powershell -NoProfile -ExecutionPolicy Bypass -File .\setup\check-setup.ps1`
+- macOS/Linux: `bash setup/check-setup.sh`
+
 ## What to copy, in adoption order
 
 1. **Context files.** `CLAUDE.template.md` and `AGENTS.template.md` become `CLAUDE.md`
