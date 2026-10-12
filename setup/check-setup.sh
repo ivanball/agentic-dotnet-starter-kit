@@ -15,6 +15,24 @@ ver_ge() {
   [ "$maj" -gt "$2" ] || { [ "$maj" -eq "$2" ] && [ "$min" -ge "$3" ]; }
 }
 
+os=$(uname -s)
+
+# The day's commands are printed for bash and some end in "# comment". macOS Terminal runs zsh,
+# which passes those words to the command as arguments unless interactivecomments is set.
+case "${SHELL:-}" in
+  */zsh)
+    zsh_comments=""
+    if zsh -ic '[[ -o interactivecomments ]]' </dev/null >/dev/null 2>&1; then zsh_comments="yes"; fi
+    check "zsh accepts # comments in pasted commands" "$zsh_comments" "echo 'setopt interactivecomments' >> ~/.zshrc, then open a new terminal"
+    ;;
+esac
+
+if [ "$os" = "Darwin" ] && [ "$(uname -m)" = "arm64" ]; then
+  rosetta=""
+  if [ -e /Library/Apple/usr/share/rosetta/rosetta ] || /usr/bin/pgrep -q oahd 2>/dev/null; then rosetta="yes"; fi
+  check "Rosetta 2 (Apple Silicon; the SQL Server image is amd64 only)" "$rosetta" "softwareupdate --install-rosetta --agree-to-license, then in Docker Desktop Settings > General turn on 'Use Rosetta for x86_64/amd64 emulation on Apple Silicon'"
+fi
+
 dotnet_v=$(dotnet --list-sdks 2>/dev/null | grep '^10\.' | tail -1)
 check ".NET SDK 10.x" "$dotnet_v" "install the .NET 10 SDK"
 
@@ -35,8 +53,34 @@ fi
 if [ -z "$port_busy" ]; then port_free="yes"; else port_free=""; fi
 check "Port 14330 free for the workshop container" "$port_free" 'something already listens on host port 14330. Stop it, or change the "14330:1433" mapping in docker-compose.yml and Server=localhost,14330 in the connection string to another free port'
 
+if command -v lsof >/dev/null 2>&1; then
+  api_port_busy=$(lsof -nP -iTCP:5000 -sTCP:LISTEN 2>/dev/null | awk 'NR>1 {print $1}' | sort -u | tr '\n' ' ')
+elif (exec 3<>/dev/tcp/127.0.0.1/5000) 2>/dev/null; then
+  api_port_busy="listener"
+else
+  api_port_busy=""
+fi
+if [ -z "$api_port_busy" ]; then api_port_free="yes"; else api_port_free=""; fi
+api_port_hint="something already listens on port 5000 ($api_port_busy), the port the workshop API uses from Lab 3 on. Stop it"
+if [ "$os" = "Darwin" ]; then
+  api_port_hint="$api_port_hint. On a Mac it is usually AirPlay Receiver (ControlCenter): System Settings > General > AirDrop & Handoff > AirPlay Receiver off"
+fi
+check "Port 5000 free for the workshop API" "$api_port_free" "$api_port_hint"
+
 ef_v=$(dotnet ef --version 2>/dev/null) || ef_v=""
-check "EF Core tools" "$ef_v" "dotnet tool install --global dotnet-ef"
+ef_hint="dotnet tool install --global dotnet-ef"
+if [ -z "$ef_v" ] && [ -e "$HOME/.dotnet/tools/dotnet-ef" ]; then
+  ef_hint="installed but not on PATH: echo 'export PATH=\"\$PATH:\$HOME/.dotnet/tools\"' >> ~/.zprofile (bash: ~/.bash_profile), then open a new terminal"
+fi
+check "EF Core tools" "$ef_v" "$ef_hint"
+
+devcert=""
+if dotnet dev-certs https --check --trust >/dev/null 2>&1; then devcert="yes"; fi
+if [ "$os" = "Darwin" ]; then
+  check "HTTPS dev certificate trusted" "$devcert" "dotnet dev-certs https --trust (macOS asks for your login password); the Lab 6 Aspire dashboard runs on https://localhost"
+else
+  soft "HTTPS dev certificate trusted" "$devcert" "dotnet dev-certs https --trust; the Lab 6 Aspire dashboard runs on https://localhost"
+fi
 
 git_v=$(git --version 2>/dev/null)
 check "Git" "$git_v" "install Git"

@@ -20,6 +20,12 @@ sure every line says OK:
 - Windows: `powershell -NoProfile -ExecutionPolicy Bypass -File .\setup\check-setup.ps1`
 - macOS/Linux: `bash setup/check-setup.sh`
 
+The workshop's terminal commands are printed once, for bash. On Windows, run them in Git Bash
+(it comes with Git for Windows). On a Mac, the stock Terminal (zsh) runs them as printed once
+you have run `echo 'setopt interactivecomments' >> ~/.zshrc` and opened a new window, and
+switched off AirPlay Receiver (System Settings > General > AirDrop & Handoff), which holds
+port 5000, the workshop API's port. The checker flags both.
+
 ## What to copy, in adoption order
 
 1. **Context files.** `CLAUDE.template.md` and `AGENTS.template.md` become `CLAUDE.md`
