@@ -34,11 +34,12 @@ port 5000, the workshop API's port. The checker flags both.
    whenever a `CLAUDE.md` exists. Fill in the blanks: half an hour, and it is the single
    highest-return file in the list.
 2. **Settings and hooks.** `.claude/settings.json` carries the allow list, the deny list,
-   the permission mode and the sandbox block, and wires the two hooks in
+   and the permission mode, and wires the two hooks in
    `.claude/hooks/`. Allow rules are for read-only and reversible work; deny rules and
-   hooks are for what must never happen regardless of who asks. The sandbox applies on
-   macOS, Linux and WSL2; on native Windows commands run unsandboxed, so the deny rules
-   and hooks are the only layer there. Every rule appears for both `Bash` and `PowerShell`,
+   hooks are for what must never happen regardless of who asks. There is no `sandbox`
+   block: on macOS the sandbox blocks the agent's `dotnet build`, `dotnet test`, NuGet
+   restore and `gh`, and on native Windows it does nothing. To add it, list every command
+   that must reach outside in `excludedCommands`. Every rule appears for both `Bash` and `PowerShell`,
    and the hooks match `Bash|PowerShell`: on Windows the agent also has a native PowerShell
    tool, and `Bash` rules and a `Bash`-only hook do not see what it runs there.
 3. **Skills.** `.claude/skills/` holds three: `slice` (add one use case end to end the
